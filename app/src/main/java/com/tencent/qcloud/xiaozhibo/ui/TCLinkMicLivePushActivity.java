@@ -345,7 +345,7 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
     /**
      * 收到连麦者开始推流的通知
      * @param strUserID
-     * @param strPlayUrl
+     * @param strPlayUrl 连麦者视频的拉流地址
      */
     @Override
     public void onReceiveMemberJoinNotify(final String strUserID, final String strPlayUrl) {
