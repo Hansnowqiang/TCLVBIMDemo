@@ -363,6 +363,7 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
 
                                         //结束从CDN拉流
                                         stopPlay(true);
+                                        //开启推流，并在大屏进行预览
                                         startLinkPush(pusherUrl);
                                     } else {
                                         Toast.makeText(getApplicationContext(), "拉取连麦推流地址失败，error=" + errCode, Toast.LENGTH_SHORT).show();
@@ -446,6 +447,7 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
                         //从低时延服务器拉流
                         mLinkMicPlayUrl = (strPlayUrl + "&session_id=" + mSessionID);
                         if (mIsBeingLinkMic && !mPausing) {
+                            //开始小屏播放主播视频
                             startLinkPlay();
                         }
                     } else {
