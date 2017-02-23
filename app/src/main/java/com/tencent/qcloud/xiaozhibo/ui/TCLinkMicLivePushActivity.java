@@ -88,9 +88,10 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
 
     private String                      mSessionID;
     private boolean                     mHasPendingRequest = false;
-
+    //连麦单元信息的集合，示例容量是1个
     private Vector<TCPlayItem>          mVecPlayItems = new Vector<>();
     private TCLinkMicTimeoutRunnable    mLinkMicTimeOutRunnable = new TCLinkMicTimeoutRunnable();
+    //连麦者id集合
     private Map<String, String>         mMapLinkMicMember = new HashMap<>();
 
     private TCLinkMicMgr                mTCLinkMicMgr;
@@ -252,8 +253,14 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * 收到连麦请求
+     * @param strUserId 连麦id
+     * @param strNickName 连麦nickname
+     */
     @Override
     public void onReceiveLinkMicRequest(final String strUserId, final String strNickName) {
+        //连麦人数限制，正在处理连麦请求
         if (mMapLinkMicMember.size() >= MAX_LINKMIC_MEMBER_SUPPORT || mHasPendingRequest == true) {
             mTCLinkMicMgr.sendLinkMicResponse(strUserId, TCConstants.LINKMIC_RESPONSE_TYPE_REJECT, "主播端连麦人数超过最大限制");
             return;
@@ -266,6 +273,7 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
                 .setPositiveButton("接受", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //连麦者id，同意连麦，后台合并视频流用的sessionid（本地获取）
                         mTCLinkMicMgr.sendLinkMicResponse(strUserId, TCConstants.LINKMIC_RESPONSE_TYPE_ACCEPT, mSessionID);
 
                         for (TCPlayItem item: mVecPlayItems) {
@@ -274,7 +282,7 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
                                 item.mPending = true;
                                 startLoading(item);
 
-                                //设置超时逻辑
+                                //设置超时逻辑，15秒连麦者未上麦自动移出连麦状态
                                 mLinkMicTimeOutRunnable.setUserID(strUserId);
                                 mHandler.removeCallbacks(mLinkMicTimeOutRunnable);
                                 mHandler.postDelayed(mLinkMicTimeOutRunnable, 15000);
@@ -296,12 +304,15 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
                 .setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //连麦者id，拒绝连麦，拒绝原因
                         mTCLinkMicMgr.sendLinkMicResponse(strUserId, TCConstants.LINKMIC_RESPONSE_TYPE_REJECT, "主播拒绝了您的连麦请求");
                         dialog.dismiss();
                         mHasPendingRequest = false;
                     }
                 });
-
+        /**
+         * 展示dialog
+         */
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -331,6 +342,11 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
     public void onReceiveKickedOutNotify() {
     }
 
+    /**
+     * 收到连麦者开始推流的通知
+     * @param strUserID
+     * @param strPlayUrl
+     */
     @Override
     public void onReceiveMemberJoinNotify(final String strUserID, final String strPlayUrl) {
         if (TextUtils.isEmpty(strUserID) || TextUtils.isEmpty(strPlayUrl)) {
@@ -351,7 +367,7 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
 
                 mMapLinkMicMember.put(strUserID, strPlayUrl);
                 if (item.mPlayUrl == null || item.mPlayUrl.length() == 0) {
-
+                    //获取连麦者带有防盗链的拉流地址
                     TCPlayerMgr.getInstance().getPlayUrlWithSignature(mUserId, strPlayUrl, new TCPlayerMgr.OnGetPlayUrlWithSignature() {
                         @Override
                         public void onGetPlayUrlWithSignature(int errCode, String playUrl) {
@@ -376,26 +392,34 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
         });
     }
 
+    /**
+     * 连麦者退出连麦
+     * @param strUserID 退出连麦的userid
+     */
     @Override
     public void onReceiveMemberExitNotify(final String strUserID) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                //获取到连麦者的播放单元信息
                 TCPlayItem item = getPlayItemByUserID(strUserID);
                 if (item != null) {
                     if (item.mPending == true) {
+                        //这在加载中连麦，移除定时任务
                         mHandler.removeCallbacks(mLinkMicTimeOutRunnable);
                     }
 
                     if (item.mPlayUrl != null && item.mPlayUrl.length() != 0) {
+                        //连麦单元停止播放
                         item.mTXLivePlayer.stopPlay(true);
                     }
-
+                    //停止loading
                     stopLoading(item, false);
+                    //清空单元信息
                     item.empty();
                     item.mBtnKickout.setVisibility(View.INVISIBLE);
                 }
-
+                //移除连麦者id
                 mMapLinkMicMember.remove(strUserID);
 //                if (mMapLinkMicMember.size() == 0) {
 //                    //如果没有人连麦了，关闭AEC

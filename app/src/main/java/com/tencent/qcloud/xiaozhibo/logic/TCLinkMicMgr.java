@@ -193,6 +193,7 @@ public class TCLinkMicMgr implements TIMMessageListener{
                     String param = (String) json.get("param");
 
                     if (TCConstants.LINKMIC_CMD_REQUEST == action) {
+                        //收到连麦请求
                         if (supportLinkMic()) {
                             mLinkMicListener.onReceiveLinkMicRequest(userId, nickname);
                         }
@@ -201,6 +202,7 @@ public class TCLinkMicMgr implements TIMMessageListener{
                         }
                     }
                     else if (TCConstants.LINKMIC_CMD_ACCEPT == action){
+                        //收到允许连麦的im消息，携带者sessionId
                         String strSessionID = "";
                         if (param != null && param.length() > 0) {
                             JSONTokener tokener = new JSONTokener(param);
@@ -215,6 +217,7 @@ public class TCLinkMicMgr implements TIMMessageListener{
                         }
                     }
                     else if (TCConstants.LINKMIC_CMD_REJECT == action){
+                        //连麦被拒绝，带有拒绝原因
                         String reason = "";
                         if (param != null && param.length() > 0) {
                             JSONTokener tokener = new JSONTokener(param);
@@ -224,7 +227,10 @@ public class TCLinkMicMgr implements TIMMessageListener{
                         mLinkMicListener.onReceiveLinkMicResponse(userId, TCConstants.LINKMIC_RESPONSE_TYPE_REJECT, reason);
                     }
                     else if (TCConstants.LINKMIC_CMD_MEMBER_JOIN_NOTIFY == action) {
+                        //连麦者开始推流
+                        //连麦者id
                         String strJoinerID    = "";
+                        //连麦者视频的拉流地址
                         String strPlayUrl = "";
                         if (param != null && param.length() > 0) {
                             JSONTokener tokener = new JSONTokener(param);
@@ -237,6 +243,7 @@ public class TCLinkMicMgr implements TIMMessageListener{
                         }
                     }
                     else if (TCConstants.LINKMIC_CMD_MEMBER_EXIT_NOTIFY == action) {
+                        //连麦者申请退出连麦
                         String strExiterID = "";
                         if (param != null && param.length() > 0) {
                             JSONTokener tokener = new JSONTokener(param);
@@ -248,6 +255,7 @@ public class TCLinkMicMgr implements TIMMessageListener{
                         }
                     }
                     else if (TCConstants.LINKMIC_CMD_KICK_MEMBER == action) {
+                        //被主播剔出连麦
                         mLinkMicListener.onReceiveKickedOutNotify();
                     }
                 }

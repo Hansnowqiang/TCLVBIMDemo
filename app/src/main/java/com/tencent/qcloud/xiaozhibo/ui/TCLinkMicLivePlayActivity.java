@@ -213,22 +213,28 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
         }
     };
 
+    /**
+     * 请求主播连麦
+     */
     private void startLinkMic() {
         if (mIsBeingLinkMic || mWaitingLinkMicResponse) {
             return;
         }
-
+        //发送IM消息连麦请求
         mTCLinkMicMgr.sendLinkMicRequest(mPusherId);
 
         mWaitingLinkMicResponse = true;
 
         mBtnLinkMic.setEnabled(false);
         mBtnLinkMic.setBackgroundResource(R.drawable.linkmic_off);
-
+        //主播响应请求超时处理
         mHandler.removeCallbacks(mRunnableLinkMicTimeOut);
         mHandler.postDelayed(mRunnableLinkMicTimeOut, 10000);   //10秒超时
     }
 
+    /**
+     * 停止连麦
+     */
     private synchronized void stopLinkMic() {
         if (mIsBeingLinkMic) {
             mIsBeingLinkMic = false;
@@ -312,6 +318,12 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
     public void onReceiveLinkMicRequest(final String strUserId, final String strNickName) {
     }
 
+    /**
+     * 请求连麦后，主播对请求的响应
+     * @param strUserId
+     * @param responseType 是否同意连麦
+     * @param strParams 同意：合流用的sessionId，不同意：拒绝的原因
+     */
     @Override
     public void onReceiveLinkMicResponse(final String strUserId, final int responseType, final String strParams) {
         if (mWaitingLinkMicResponse == false) {
@@ -333,7 +345,7 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
                     mIsBeingLinkMic = true;
                     mBtnLinkMic.setBackgroundResource(R.drawable.linkmic_off);
                     Toast.makeText(getApplicationContext(), "主播接受了您的连麦请求，开始连麦", Toast.LENGTH_SHORT).show();
-
+                    //请求服务器获取连麦推流地址
                     TCPusherMgr.getInstance().getPusherUrlForLinkMic(TCUserInfoMgr.getInstance().getUserId(),
                             "连麦",
                             TCUserInfoMgr.getInstance().getCoverPic(),
@@ -344,7 +356,9 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
                                 @Override
                                 public void onGetPusherUrlForLinkMic(int errCode, String pusherUrl, String playUrl, String timeStamp) {
                                     if (errCode == 0) {
+                                        //构建推流地址
                                         pusherUrl = new StringBuilder(pusherUrl).append(String.format("&mix=layer:s;t_id:1;session_id:%s", mSessionID)).toString();
+                                        //要给主播端的拉取上麦这视频流的地址
                                         mLinkMicNotifyUrl = playUrl;
 
                                         //结束从CDN拉流
@@ -414,6 +428,11 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
         }
     }
 
+    /**
+     * 开始推流后收到推流事件的回调
+     * @param event 时间
+     * @param bundle
+     */
     @Override
     public void onPushEvent(int event, Bundle bundle) {
         if (event == TXLiveConstants.PUSH_EVT_PUSH_BEGIN && mIsBeingLinkMic) {                     //开始推流事件通知
