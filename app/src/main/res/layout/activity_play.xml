@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_play_root"
+    tools:ignore="contentDescription"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/background"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.tencent.qcloud.xiaozhibo.ui.customviews.TCVideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+    <FrameLayout
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="20dp">
+
+        <com.tencent.qcloud.xiaozhibo.ui.customviews.TCVideoView
+            android:id="@+id/small_video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <FrameLayout
+            android:id="@+id/linkmic_loading_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:alpha="0.5"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/linkmic_loading"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_controllLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include android:id="@+id/layout_live_pusher_info"
+            layout="@layout/layout_live_pusher_info"
+            android:layout_margin="5dp"
+            android:layout_width="110dp"
+            android:layout_height="35dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_user_avatar"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/layout_live_pusher_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="15dp">
+
+            <ImageView
+                android:id="@+id/btn_message_input"
+                android:layout_width="@dimen/live_btn_size"
+                android:layout_height="@dimen/live_btn_size"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/icon_message"
+                android:onClick="onClick"
+                />
+
+            <Button
+                android:id="@+id/btn_switch_cam"
+                android:layout_width="@dimen/live_btn_size"
+                android:layout_height="@dimen/live_btn_size"
+                android:background="@drawable/icon_switch_camera_on"
+                android:layout_toLeftOf="@+id/btn_linkmic"
+                android:visibility="invisible"
+                />
+
+            <Button
+                android:id="@+id/btn_linkmic"
+                android:layout_width="@dimen/live_btn_size"
+                android:layout_height="@dimen/live_btn_size"
+                android:layout_toLeftOf="@+id/btn_share"
+                android:background="@drawable/linkmic_on"
+                android:layout_marginLeft="20dp"
+                android:visibility="invisible"
+                />
+
+            <ImageView
+                android:id="@+id/btn_share"
+                android:layout_width="@dimen/live_btn_size"
+                android:layout_height="@dimen/live_btn_size"
+                android:layout_toLeftOf="@+id/btn_log"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/icon_share"
+                android:onClick="onClick"
+                />
+            <ImageView
+                android:id="@+id/btn_log"
+                android:layout_width="@dimen/live_btn_size"
+                android:layout_height="@dimen/live_btn_size"
+                android:layout_marginLeft="20dp"
+                android:layout_toLeftOf="@+id/btn_like"
+                android:background="@drawable/icon_log_off"
+                android:onClick="onClick"
+                />
+            <ImageView
+                android:id="@+id/btn_like"
+                android:layout_width="@dimen/live_btn_size"
+                android:layout_height="@dimen/live_btn_size"
+                android:layout_marginLeft="20dp"
+                android:layout_toLeftOf="@+id/btn_back"
+                android:background="@drawable/icon_like"
+                android:onClick="onClick"
+                />
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="@dimen/live_btn_size"
+                android:layout_height="@dimen/live_btn_size"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/btn_close"
+                android:onClick="onClick"/>
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/im_msg_listview"
+            android:layout_width="250dp"
+            android:layout_height="10dp"
+            android:layout_marginLeft="15dp"
+            android:scrollbars="none"
+            android:layout_alignParentLeft="true"
+            android:layout_above="@id/tool_bar"
+            android:cacheColorHint="#00000000"
+            android:divider="#3c421b1b"
+            android:scrollbarStyle="outsideOverlay"
+            android:stackFromBottom="true"
+            android:transcriptMode="normal"
+            android:visibility="gone"/>
+
+        <!--点赞动画-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="10dp">
+
+            <com.tencent.qcloud.xiaozhibo.ui.customviews.TCHeartLayout
+                android:id="@+id/heart_layout"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:focusable="true" />
+        </RelativeLayout>
+
+        <!--弹幕-->
+        <master.flame.danmaku.ui.widget.DanmakuView
+            android:id="@+id/danmakuView"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"/>
+
+        <include android:id="@+id/progressbar_container"
+            layout="@layout/layout_progress_bar"
+            android:layout_marginBottom="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
