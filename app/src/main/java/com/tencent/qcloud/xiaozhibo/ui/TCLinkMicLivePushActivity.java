@@ -28,6 +28,9 @@ import java.util.Vector;
 
 /**
  * Created by dennyfeng on 16/11/16.
+ *
+ *
+ * 连麦的接受端，主播端
  */
 public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implements TCLinkMicMgr.TCLinkMicListener{
 

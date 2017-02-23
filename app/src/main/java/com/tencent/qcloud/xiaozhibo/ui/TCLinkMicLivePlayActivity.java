@@ -29,6 +29,8 @@ import com.tencent.rtmp.ui.TXCloudVideoView;
 
 /**
  * Created by dennyfeng on 16/11/16.
+ *
+ * 连麦的请求端，连麦这或一般观众
  */
 public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements ITXLivePushListener, TCLinkMicMgr.TCLinkMicListener {
 
@@ -105,8 +107,9 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish,options);
-
+        //设置暂停图片
         mTXLivePushConfigLink.setPauseImg(bitmap);
+        //设置暂停flag
         mTXLivePushConfigLink.setPauseFlag(TXLiveConstants.PAUSE_FLAG_PAUSE_VIDEO | TXLiveConstants.PAUSE_FLAG_PAUSE_AUDIO);
         mTXLivePushConfigLink.enableAEC(true);
         mTXLivePushConfigLink.setHardwareAcceleration(true);
