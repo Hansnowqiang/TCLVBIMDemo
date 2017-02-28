@@ -6,6 +6,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -285,7 +286,7 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
                                 //设置超时逻辑，15秒连麦者未上麦自动移出连麦状态
                                 mLinkMicTimeOutRunnable.setUserID(strUserId);
                                 mHandler.removeCallbacks(mLinkMicTimeOutRunnable);
-                                mHandler.postDelayed(mLinkMicTimeOutRunnable, 15000);
+//                                mHandler.postDelayed(mLinkMicTimeOutRunnable, 15000*2);
 
                                 //加入连麦成员列表
                                 mMapLinkMicMember.put(strUserId, "");
@@ -379,6 +380,7 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
                                         if (playItem.mVideoView != null) {
                                             playItem.mVideoView.clearLog();
                                         }
+                                        Log.e(TAG,"主播端获取的连麦端拉流地址：" + playItem.mPlayUrl);
                                         playItem.mTXLivePlayer.startPlay(playItem.mPlayUrl, TXLivePlayer.PLAY_TYPE_LIVE_RTMP_ACC);
                                     }
                                 } else {
@@ -515,14 +517,14 @@ public class TCLinkMicLivePushActivity extends TCLivePublisherActivity implement
             if (videoView != null) {
                 videoView.setLogText(null,param,event);
             }
-            if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT || event == TXLiveConstants.PLAY_EVT_PLAY_END) {
-                if (item.mPending == true) {
-                    handleLinkMicFailed(item, "拉流失败，结束连麦");
-                }
-                else {
-                    handleLinkMicFailed(item, "连麦观众视频断流，结束连麦");
-                }
-            }
+//            if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT || event == TXLiveConstants.PLAY_EVT_PLAY_END) {
+//                if (item.mPending == true) {
+//                    handleLinkMicFailed(item, "拉流失败，结束连麦");
+//                }
+//                else {
+//                    handleLinkMicFailed(item, "连麦观众视频断流，结束连麦");
+//                }
+//            }
             else if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
                 if (item.mPending == true) {
                     item.mPending = false;

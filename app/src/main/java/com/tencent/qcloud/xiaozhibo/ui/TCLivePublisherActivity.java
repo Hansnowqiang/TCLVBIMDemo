@@ -301,6 +301,7 @@ public class TCLivePublisherActivity extends TCBaseActivity implements ITXLivePu
 
         mTXLivePusher.startCameraPreview(mTXCloudVideoView);
         mTXLivePusher.startPusher(mPushUrl);
+        Log.e(TAG,"主播端推流地址：" + mPushUrl);
     }
 
     protected void stopPublish() {

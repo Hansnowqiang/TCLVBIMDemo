@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -284,6 +285,8 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
             startLoading();
             mTXLivePlayerLink.setPlayerView(mSmallVideoView);
             mSmallVideoView.clearLog();
+
+            Log.e(TAG,"连麦端获取到的主播端的拉流地址：" + mLinkMicPlayUrl);
             mTXLivePlayerLink.startPlay(mLinkMicPlayUrl, TXLivePlayer.PLAY_TYPE_LIVE_RTMP_ACC);
         }
     }
@@ -358,6 +361,9 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
                                     if (errCode == 0) {
                                         //构建推流地址
                                         pusherUrl = new StringBuilder(pusherUrl).append(String.format("&mix=layer:s;t_id:1;session_id:%s", mSessionID)).toString();
+
+                                        Log.e(TAG,"连麦端推流地址：" + pusherUrl);
+
                                         //要给主播端的拉取上麦这视频流的地址
                                         mLinkMicNotifyUrl = playUrl;
 
@@ -440,7 +446,10 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
             //向主播发送加入连麦的通知
             mTCLinkMicMgr.sendMemberJoinNotify(mPusherId, TCLoginMgr.getInstance().getLastUserInfo().identifier, mLinkMicNotifyUrl);
 
-            mTCPlayerMgr.getPlayUrlWithSignature(mUserId, mPlayUrl, new TCPlayerMgr.OnGetPlayUrlWithSignature() {
+            String substring = mPlayUrl.substring(4);
+            String substring1 = substring.substring(0, substring.length() - 4);
+            String url = "rtmp" + substring1;
+            mTCPlayerMgr.getPlayUrlWithSignature(mUserId, url, new TCPlayerMgr.OnGetPlayUrlWithSignature() {
                 @Override
                 public void onGetPlayUrlWithSignature(int errCode, String strPlayUrl) {
                     if (errCode == 0 && strPlayUrl != null && strPlayUrl.length() > 0) {
@@ -472,12 +481,12 @@ public class TCLinkMicLivePlayActivity extends TCLivePlayerActivity implements I
             if (mSmallVideoView != null) {
                 mSmallVideoView.setLogText(null,param,event);
             }
-            if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
-                //开始拉流，或者拉流失败，结束loading
-                stopLoading();
-            } else if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT || event == TXLiveConstants.PLAY_EVT_PLAY_END) {
-                handleLinkMicFailed("主播的流拉取失败，结束连麦");
-            }
+//            if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
+//                //开始拉流，或者拉流失败，结束loading
+//                stopLoading();
+//            } else if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT || event == TXLiveConstants.PLAY_EVT_PLAY_END) {
+//                handleLinkMicFailed("主播的流拉取失败，结束连麦");
+//            }
         }
 
         public void onNetStatus(final Bundle status) {
