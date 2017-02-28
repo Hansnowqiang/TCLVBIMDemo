@@ -9,8 +9,8 @@ public class TCConstants {
     //小直播相关配置请参考:https://www.qcloud.com/document/product/454/7999
     //************在腾讯云开通各项服务后，将您的配置替换到如下的几个定义中************
     //云通信服务相关配置
-    public static final int IMSDK_ACCOUNT_TYPE = 0;
-    public static final int IMSDK_APPID = 0;
+    public static final int IMSDK_ACCOUNT_TYPE = 6335;
+    public static final int IMSDK_APPID = 1400012211;
 
     //COS存储服务相关配置
     public static final String COS_BUCKET = "";
@@ -20,7 +20,7 @@ public class TCConstants {
     public static final COSEndPoint COS_REGION = COSEndPoint.COS_SH;
 
     //业务Server的Http配置
-    public static final String SVR_POST_URL = "";
+    public static final String SVR_POST_URL = "http://192.168.31.128:8088/NewLiveServer/interface.php";
 
     //直播分享页面的跳转地址，分享到微信、手Q后点击观看将会跳转到这个地址，请参考https://www.qcloud.com/document/product/454/8046 文档部署html5的代码后，替换成相应的页面地址
     public static final String SVR_LivePlayShare_URL = "";
